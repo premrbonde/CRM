@@ -371,8 +371,8 @@ def seed_database():
 
 @app.on_event("startup")
 def startup_event():
-    # seed_database()
-    pass
+    seed_database()
+
 
 @app.get("/")
 def read_root():
