@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://crm_user:crm_password@db:5432/crm_db
+      - SECRET_KEY=supersecretjwtkeyforcrmapplication2026!
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - MOCK_LLM=${MOCK_LLM:-False}
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=crm_user
+      - POSTGRES_PASSWORD=crm_password
+      - POSTGRES_DB=crm_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
